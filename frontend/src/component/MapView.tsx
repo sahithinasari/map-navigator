@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { fetchRoutes } from "../clients/RouteSearchService";
+
 interface RouteSearch {
   sourceLat: number;
   sourceLng: number;
@@ -14,27 +15,28 @@ interface RouteSearch {
 }
 
 interface Props {
-  source: string;
-  destination: string;
-  trigger: boolean; 
+  sourceLabel: string;
+  destinationLabel: string;
+  sourceLat: number;
+  sourceLng: number;
+  destLat: number;
+  destLng: number;
+  trigger: boolean;
 }
 
-export default function MapView({ source, destination, trigger }: Props) {
+export default function MapView({ sourceLabel, destinationLabel, sourceLat, sourceLng, destLat, destLng, trigger }: Props) {
   const [route, setRoute] = useState<RouteSearch | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!source || !destination) return;
-
     const fetchRoute = async () => {
       try {
         setLoading(true);
         setError(null);
         setRoute(null);
 
-        const res = await fetchRoutes(source,destination) ;
-
+        const res = await fetchRoutes(sourceLabel, destinationLabel, sourceLat, sourceLng, destLat, destLng);
         const data: RouteSearch = await res.json();
         setRoute(data);
       } catch (err: any) {
@@ -44,8 +46,8 @@ export default function MapView({ source, destination, trigger }: Props) {
       }
     };
 
-    fetchRoute();
-  }, [source, destination, trigger]);
+    if (trigger) fetchRoute();
+  }, [sourceLabel, destinationLabel, sourceLat, sourceLng, destLat, destLng, trigger]);
 
   if (loading)
     return (
@@ -68,13 +70,30 @@ export default function MapView({ source, destination, trigger }: Props) {
 
   return (
     <Box>
-      <Typography variant="subtitle1" mb={1}>
-        Distance: {route.distanceKm.toFixed(2)} km | Duration: {route.durationMin.toFixed(2)} min
-      </Typography>
+      {/* Floating info card */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          bgcolor: "rgba(255,255,255,0.85)",
+          p: 1.5,
+          borderRadius: 2,
+          boxShadow: 3,
+          zIndex: 1000,
+        }}
+      >
+        <Typography variant="body2">
+          Distance: {route.distanceKm.toFixed(2)} km
+        </Typography>
+        <Typography variant="body2">
+          Duration: {route.durationMin.toFixed(2)} min
+        </Typography>
+      </Box>
 
       <MapContainer
         center={[route.sourceLat, route.sourceLng]}
-        zoom={6}
+        zoom={13} // closer zoom for intra-city routes
         style={{ height: '500px', width: '100%' }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

@@ -50,12 +50,12 @@ export default function Navbar(props: Props) {
   return (
     <Box>
       <AppBar
-        position="static"
+        position="relative"
         sx={{
-          borderRadius: "24px",
-          backgroundColor: "#1C1C2E",
+          borderRadius: "24px", // keeps the oval shape
+          backgroundColor: "transparent", // fully transparent
           boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
-          px: 2, // horizontal padding
+          px: 2, // horizontal padding for content
         }}
       >
         <Toolbar
