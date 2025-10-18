@@ -7,5 +7,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
+    # password: your_redis_password (if any)
 server:
   port: 2027
