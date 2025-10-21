@@ -75,7 +75,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-
+		<finalName>map-navigator</finalName>
 	</build>
 
 </project>
